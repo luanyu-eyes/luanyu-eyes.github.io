@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>first blog</title>
+    <url>/2021/11/29/first-blog/</url>
+    <content><![CDATA[<p>Test</p>
+<p>1.</p>
+<p>2.</p>
+<p>3.</p>
+<p>4.</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Minecraft_fabric_1.0</title>
+    <url>/2021/12/04/Minecraft-fabric-1-0/</url>
+    <content><![CDATA[<p>fabrcmod<br>版本：1.17.1<br>任务：添加项目</p>
+<p>首先在src/main/java/net/fabricmc下创建名为my_first_mod/item的文件夹，在item文件夹中创建一类来注册要添加的物品，如图         </p>
+<p><img src="/images/pasted-0.png" alt="upload successful"><br>在RegisterItem类中注册要添加的物品<br><img src="/images/pasted-1.png" alt="upload successful"><br>这张图中的代码意思是创建了一个名为NOODLE（创建时名称一定要大写，且该名称不能是已经出现过的）的物品。分组为MISC，饥饿值为2，饱食度是0.6（最高1.0）最大堆叠上限是64。<br>最后需要在主类（ExampleMod）中注册新创建的类<br><img src="/images/pasted-2.png" alt="upload successful"></p>
+<p><img src="/images/pasted-3.png" alt="upload successful"><br>成功创建了一个新物品，但是没有名字和图片<br>添加图片和名字需要在src/main/java/resource文件下创建my_first_mod/textures/item  my_first_mod/models/item和my_first_mod/lang的文件夹<br>在lang文件夹下创建zh_cn.json的文件，写入<br>{<br>  “item.my_first_mod.noodle”: “面条”<br>}<br>在modles/item文件夹下创建noodle.json，写入<br>{<br>  “parent”: “item/generated”,<br>  “textures”: {<br>    “layer0”: “my_first_mod:item/noodle”<br>  }<br>}<br>最后在textures/item文件夹下放入同名（noodle）的图片（图片格式只能为.png）  </p>
+<p><img src="/images/pasted-5.png" alt="upload successful"><br>成功创建</p>
+]]></content>
+      <categories>
+        <category>Mincraft</category>
+      </categories>
+      <tags>
+        <tag>Mincraft_fabric_mod</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>pwn_简单的爆破1.0</title>
+    <url>/2021/12/06/pwn-%E7%AE%80%E5%8D%95%E7%9A%84%E7%88%86%E7%A0%B41-0/</url>
+    <content><![CDATA[<p>如题，一个简单的爆破</p>
+<p>平台：linux</p>
+<p>原理：一个elf文件会默认开启ASLR，随机化系统调用的地址。随机化的方式是在原地址的基础上加上一个较大的数字例如__libc_start_main在libc-2.28.so中的地址是0x23fb0，开启随机化后地址变为0x7ffff7e1209b，相应的，one_gadget的地址0x4497f变为了0x7ffff7e3297f，对比 _libc_start_main随机化后的地址发现，只有末尾的六位十六进制数字是不同的。<br>可以利用这个原理在不知道偏移的情况下，覆盖_libc_start_main地址的后六位直接爆破。由于随机化后的地址最后三位与原地址相同，所以实际需要爆破的数字只有三位，三位十六进制数字需要爆破4096次，在可接受范围内。<br>为了验证自己的想法，自己写了一个elf文件，以下是c语言源码（图中部分的代码是实验时为了方便观测所写的，不涉及解题过程）：<br><img src="/images/pasted-6.png" alt="upload successful"><br>这是ida反编译的结果：<br><img src="/images/pasted-7.png" alt="upload successful"><br>没有其他内容，所以直接上python脚本（python3）：<br><img src="/images/pasted-8.png" alt="upload successful"><br>程序异常退出后再进行recv()操作会直接报错，可捕获这个报错，实现脚本的多次执行,最后附上运行结果<br><img src="/images/pasted-9.png" alt="upload successful"></p>
+]]></content>
+      <categories>
+        <category>pwn</category>
+      </categories>
+      <tags>
+        <tag>爆破的初尝试</tag>
+      </tags>
+  </entry>
+</search>
