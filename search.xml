@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>first blog</title>
+    <url>/2021/11/29/first-blog/</url>
+    <content><![CDATA[<p>Test</p>
+<p>1.</p>
+<p>2.</p>
+<p>3.</p>
+<p>4.</p>
+]]></content>
+  </entry>
+  <entry>
     <title>Minecraft_fabric_1.0</title>
     <url>/2021/12/04/Minecraft-fabric-1-0/</url>
     <content><![CDATA[<p>fabrcmod<br>版本：1.17.1<br>任务：添加项目</p>
@@ -17,16 +27,6 @@
       </tags>
   </entry>
   <entry>
-    <title>first blog</title>
-    <url>/2021/11/29/first-blog/</url>
-    <content><![CDATA[<p>Test</p>
-<p>1.</p>
-<p>2.</p>
-<p>3.</p>
-<p>4.</p>
-]]></content>
-  </entry>
-  <entry>
     <title>pwn_简单的爆破1.0</title>
     <url>/2021/12/06/pwn-%E7%AE%80%E5%8D%95%E7%9A%84%E7%88%86%E7%A0%B41-0/</url>
     <content><![CDATA[<p>如题，一个简单的爆破</p>
@@ -41,11 +41,6 @@
       </tags>
   </entry>
   <entry>
-    <title>测试</title>
-    <url>/2022/01/08/%E6%B5%8B%E8%AF%95/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>攻防世界-stack2</title>
     <url>/2022/02/12/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-stack2/</url>
     <content><![CDATA[<p>关键词：数组溢出，栈溢出</p>
@@ -58,6 +53,59 @@
         io.sendlineafter(&#39;new number:\n&#39;, str(bb))
 </code></pre>
 <p>system_add = 0x8048450<br>sh_add = 0x08048987<br>io.sendline(b’1’)<br>io.sendline(b’1’)<br>#system<br>SEND(0x84,0x50)<br>SEND(0x85,0x84)<br>SEND(0x86,0x04)<br>SEND(0x87,0x08)<br>#sh<br>SEND(0x8c,0x87)<br>SEND(0x8d,0x89)<br>SEND(0x8e,0x04)<br>SEND(0x8f,0x08)<br>io.sendline(b’5’)<br>#io.recv()<br>io.interactive()<br><img src="/images/pasted-18.png" alt="upload successful"></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>测试</title>
+    <url>/2022/01/08/%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>堆</title>
+    <url>/2022/03/12/%E5%A0%86/</url>
+    <content><![CDATA[<h1 align = 'center'>堆</h1>
+（在linux中主要使用的堆管理器是ptmalloc2，因此一下内容以ptmalloc2为例）  
+** 1. 堆分配的基本流程**  
+堆的主要操作为申请内存和释放内存 
++ 申请内存  
+malloc（void* p）：返回对应大小字节的内存块的指针，当 n=0 时，返回当前系统允许的堆的最小内存块；当 n 为负数时，由于在大多数系统上，size_t 是无符号数，所以程序就会申请很大的内存空间，但通常来说都会失败，因为系统没有那么多的内存可以分配。
++ 释放内存  
+free（void* p）：释放由 p 所指向的内存块，当 p 为空指针时，函数不执行任何操作；当 p 已经被释放之后，再次释放会出现乱七八糟的效果；除了被禁用的情况下，当释放很大的内存空间时，程序会将这些内存空间还给系统，以便于减小程序所使用的内存空间。    
+
+<p>** 2. 堆相关的数据结构**  </p>
+<ul>
+<li><p>malloc_chunk<br>定义：在程序的执行过程中，我们称由 malloc 申请的内存为 chunk 。这块内存在 ptmalloc 内部用 malloc_chunk 结构体来表示。当程序申请的 chunk 被 free 后，会被加入到相应的空闲管理列表中。<br>结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">  This struct declaration is misleading (but accurate and necessary).</span><br><span class="line">  It declares a &quot;view&quot; into memory allowing access to necessary</span><br><span class="line">  fields at known offsets from a given base. See explanation below.</span><br><span class="line">*/</span><br><span class="line">struct malloc_chunk &#123;</span><br><span class="line"></span><br><span class="line">  INTERNAL_SIZE_T      prev_size;  /* Size of previous chunk (if free).  */</span><br><span class="line">  INTERNAL_SIZE_T      size;       /* Size in bytes, including overhead. */</span><br><span class="line"></span><br><span class="line">  struct malloc_chunk* fd;         /* double links -- used only if free. */</span><br><span class="line">  struct malloc_chunk* bk;</span><br><span class="line"></span><br><span class="line">  /* Only used for large blocks: pointer to next larger size.  */</span><br><span class="line">  struct malloc_chunk* fd_nextsize; /* double links -- used only if free. */</span><br><span class="line">  struct malloc_chunk* bk_nextsize;</span><br></pre></td></tr></table></figure>
+<p>字段解释：</p>
+<ol>
+<li>prev_size, 如果该 chunk 的物理相邻的前一地址 chunk（两个指针的地址差值为前一 chunk 大小）是空闲的话，那该字段记录的是前一个 chunk 的大小 (包括 chunk 头)。否则，该字段可以用来存储物理相邻的前一个 chunk 的数据。这里的前一 chunk 指的是较低地址的 chunk 。</li>
+<li>size ，该 chunk 的大小，大小必须是 2 * SIZE_SZ 的整数倍。如果申请的内存大小不是 2 * SIZE_SZ 的整数倍，会被转换满足大小的最小的 2 * SIZE_SZ 的倍数。32 位系统中，SIZE_SZ 是 4；64 位系统中，SIZE_SZ 是 8。 该字段的低三个比特位对 chunk 的大小没有影响，它们从高到低分别表示：<pre><code>  NON_MAIN_ARENA，记录当前 chunk 是否不属于主线程，1 表示不属于，0 表示属于。  
+  IS_MAPPED，记录当前 chunk 是否是由 mmap 分配的 
+  PREV_INUSE，记录前一个 chunk 块是否被分配。一般来说，堆中第一个被分配的内存块的 size 字段的 P 位都会被设置为 1，以便于防止访问前面的非法内存。当一个 chunk 的 size 的 P 位为 0 时，我们能通过 prev_size 字段来获取上一个 chunk 的大小以及地址。这也方便进行空闲 chunk 之间的合并。
+</code></pre>
+</li>
+<li>fd，bk。 chunk 处于分配状态时，从 fd 字段开始是用户的数据。chunk 空闲时，会被添加到对应的空闲管理链表中，其字段的含义如下：<pre><code> fd 指向下一个（非物理相邻）空闲的 chunk
+ bk 指向上一个（非物理相邻）空闲的 chunk
+ 通过 fd 和 bk 可以将空闲的 chunk 块加入到空闲的 chunk 块链表进行统一管理  
+</code></pre>
+</li>
+<li>fd_nextsize， bk_nextsize，也是只有 chunk 空闲的时候才使用，不过其用于较大的 chunk（large chunk）。<pre><code>fd_nextsize 指向前一个与当前 chunk 大小不同的第一个空闲块，不包含 bin 的头指针。
+ bk_nextsize 指向后一个与当前 chunk 大小不同的第一个空闲块，不包含 bin 的头指针。
+ 一般空闲的 large chunk 在 fd 的遍历顺序中，按照由大到小的顺序排列。这样做可以避免在寻找合适 chunk 时挨个遍历。
+</code></pre>
+</li>
+</ol>
+</li>
+<li><p>bin<br>定义：ptmalloc 采用分箱式方法对空闲的 chunk 进行管理，首先，它会根据空闲的 chunk 的大小以及使用状态将 chunk 初步分为 4 类：fast bins，small bins，large bins，unsorted bin。<br>  small bins，large bins，unsorted bin：由ptmalloc 维护在同一个数组中，其对应的数据结构在malloc_state 中，其顺序是：</p>
+<pre><code>  1.第一个为 unsorted bin，字如其面，这里面的 chunk 没有进行排序，存储的 chunk 比较杂。
+  2.索引从 2 到 63 的 bin 称为 small bin，同一个 small bin 链表中的 chunk 的大小相同。两个相邻索引的 small bin 链表中的 chunk 大小相差的字节数为 2 个机器字长，即 32 位相差 8 字节，64 位相差 16 字节。
+  3.small bins 后面的 bin 被称作 large bins。large bins 中的每一个 bin 都包含一定范围内的 chunk，其中的 chunk 按 fd 指针的顺序从大到小排列。相同大小的 chunk 同样按照最近使用顺序排列。
+</code></pre>
+<p>   (任意两个物理相邻的空闲 chunk 不能在一起)<br>Fast Bin:大多数程序经常会申请以及释放一些比较小的内存块。如果将一些较小的 chunk 释放之后发现存在与之相邻的空闲的 chunk 并将它们进行合并，那么当下一次再次申请相应大小的 chunk 时，就需要对 chunk 进行分割，这样就大大降低了堆的利用效率。因为我们把大部分时间花在了合并、分割以及中间检查的过程中。因此，ptmalloc 中专门设计了 fast bin，对应的变量就是 malloc state 中的 fastbinsY<br>```<br>/*<br> Fastbins<br>  An array of lists holding recently freed small chunks.  Fastbins<br>  are not doubly linked.  It is faster to single-link them, and<br>  since chunks are never removed from the middles of these lists,<br>  double linking is not necessary. Also, unlike regular bins, they<br>  are not even processed in FIFO order (they use faster LIFO) since<br>  ordering doesn’t much matter in the transient contexts in which<br>  fastbins are normally used.</p>
+<p>  Chunks in fastbins keep their inuse bit set, so they cannot<br>  be consolidated with other free chunks. malloc_consolidate<br>  releases all chunks in fastbins and consolidates them with<br>  other free chunks.</p>
+</li>
+</ul>
+<p> <em>/<br>typedef struct malloc_chunk <em>mfastbinptr;<br>/</em><br>    This is in malloc_state.<br>    /</em> Fastbins */<br>    mfastbinptr fastbinsY[ NFASTBINS ];<br>*/```</p>
 ]]></content>
   </entry>
 </search>
