@@ -76,14 +76,14 @@
      
     <div class="article-meta">
       <a href="/2022/03/12/%E5%A0%86/" class="article-date">
-  <time datetime="2022-03-12T09:07:14.000Z" itemprop="datePublished">2022-03-12</time>
+  <time datetime="2022-03-12T09:07:00.000Z" itemprop="datePublished">2022-03-12</time>
 </a>   
 <div class="word_count">
     <span class="post-time">
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1.5k</span>
+            <span class="post-count">1.4k</span>
         </span>
     </span>
 
@@ -92,7 +92,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">6 min</span>
+            <span class="post-count">5 min</span>
         </span>
     </span>
 </div>
@@ -140,16 +140,15 @@ free（void* p）：释放由 p 所指向的内存块，当 p 为空指针时，
 </li>
 </ol>
 </li>
-<li><p>bin<br>定义：ptmalloc 采用分箱式方法对空闲的 chunk 进行管理，首先，它会根据空闲的 chunk 的大小以及使用状态将 chunk 初步分为 4 类：fast bins，small bins，large bins，unsorted bin。<br>  small bins，large bins，unsorted bin：由ptmalloc 维护在同一个数组中，其对应的数据结构在malloc_state 中，其顺序是：</p>
-<pre><code>  1.第一个为 unsorted bin，字如其面，这里面的 chunk 没有进行排序，存储的 chunk 比较杂。
-  2.索引从 2 到 63 的 bin 称为 small bin，同一个 small bin 链表中的 chunk 的大小相同。两个相邻索引的 small bin 链表中的 chunk 大小相差的字节数为 2 个机器字长，即 32 位相差 8 字节，64 位相差 16 字节。
-  3.small bins 后面的 bin 被称作 large bins。large bins 中的每一个 bin 都包含一定范围内的 chunk，其中的 chunk 按 fd 指针的顺序从大到小排列。相同大小的 chunk 同样按照最近使用顺序排列。
-</code></pre>
-<p>   (任意两个物理相邻的空闲 chunk 不能在一起)<br>Fast Bin:大多数程序经常会申请以及释放一些比较小的内存块。如果将一些较小的 chunk 释放之后发现存在与之相邻的空闲的 chunk 并将它们进行合并，那么当下一次再次申请相应大小的 chunk 时，就需要对 chunk 进行分割，这样就大大降低了堆的利用效率。因为我们把大部分时间花在了合并、分割以及中间检查的过程中。因此，ptmalloc 中专门设计了 fast bin，对应的变量就是 malloc state 中的 fastbinsY<br>```<br>/*<br> Fastbins<br>  An array of lists holding recently freed small chunks.  Fastbins<br>  are not doubly linked.  It is faster to single-link them, and<br>  since chunks are never removed from the middles of these lists,<br>  double linking is not necessary. Also, unlike regular bins, they<br>  are not even processed in FIFO order (they use faster LIFO) since<br>  ordering doesn’t much matter in the transient contexts in which<br>  fastbins are normally used.</p>
-<p>  Chunks in fastbins keep their inuse bit set, so they cannot<br>  be consolidated with other free chunks. malloc_consolidate<br>  releases all chunks in fastbins and consolidates them with<br>  other free chunks.</p>
+<li><p>bin<br>定义：ptmalloc 采用分箱式方法对空闲的 chunk 进行管理，首先，它会根据空闲的 chunk 的大小以及使用状态将 chunk 初步分为 4 类：fast bins，small bins，large bins，unsorted bin。 </p>
+<p>  Fast Bin:<br>  chunk的大小在32字节<del>128字节（0x20</del>0x80）的chunk称为“fast chunk”，fast bin链表的个数为10个。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">   Fastbins</span><br><span class="line">    An array of lists holding recently freed small chunks.  Fastbins</span><br><span class="line">    are not doubly linked.  It is faster to single-link them, and</span><br><span class="line">    since chunks are never removed from the middles of these lists,</span><br><span class="line">    double linking is not necessary. Also, unlike regular bins, they</span><br><span class="line">    are not even processed in FIFO order (they use faster LIFO) since</span><br><span class="line">    ordering doesn&#x27;t much matter in the transient contexts in which</span><br><span class="line">    fastbins are normally used.</span><br><span class="line"></span><br><span class="line">    Chunks in fastbins keep their inuse bit set, so they cannot</span><br><span class="line">    be consolidated with other free chunks. malloc_consolidate</span><br><span class="line">    releases all chunks in fastbins and consolidates them with</span><br><span class="line">    other free chunks.</span><br><span class="line"> */</span><br><span class="line">typedef struct malloc_chunk *mfastbinptr;</span><br><span class="line">/*</span><br><span class="line">    This is in malloc_state.</span><br><span class="line">    /* Fastbins */</span><br><span class="line">    mfastbinptr fastbinsY[ NFASTBINS ];</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+<p><img src="/images/pasted-20.png" alt="upload successful"></p>
 </li>
 </ul>
-<p> <em>/<br>typedef struct malloc_chunk <em>mfastbinptr;<br>/</em><br>    This is in malloc_state.<br>    /</em> Fastbins */<br>    mfastbinptr fastbinsY[ NFASTBINS ];<br>*/```</p>
+<p>Unsorted Bin：<br>    当释放较小或较大的chunk的时候，如果系统没有将它们添加到对应的bins中，系统就将这些chunk添加到unsorted bin中。这主要是为了让“glibc malloc机制”能够有第二次机会重新利用最近释放的chunk(第一次机会就是fast bin机制)。利用unsorted bin，可以加快内存的分配和释放操作，因为整个操作都不再需要花费额外的时间去查找合适的bin了。  </p>
+<p>   Small Bin：<br>    小于1024字节（0x400）的chunk称之为small chunk，small bin就是用于管理small chunk的，small bin链表的个数为62个，就内存的分配和释放速度而言，small bin比larger bin快，但比fast bin慢。  </p>
+<p>   Large Bin：大于等于1024字节（0x400）的chunk称之为large chunk，large bin就是用于管理这些largechunk的，large bin链表的个数为63个，被分为6组，largechunk使用fd_nextsize、bk_nextsize连接起来的。</p>
  
       <!-- reward -->
       

